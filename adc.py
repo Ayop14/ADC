@@ -52,17 +52,13 @@ def mergeSort(arr,indexes):
             k += 1
 
 class adc:
-  def __init__(self,file):
+  def __init__(self,data,index):
     #para los metodos de mergesort, es necesario tambien pasarles la dimension
     #en la que estan trabajando actualmente para evitar hacer copias
     #inicio/final/dimension actual/dimensiones totales
     #breakpoint()
-    data = np.genfromtxt(file,dtype=float,delimiter=",")
-    muestras,D = data.shape
-    indexes = np.tile(np.arange(D),(muestras,1))
-    for d in range(D):
-      mergeSort(data[:,d],indexes[d])
-    self.data = np.genfromtxt(file,dtype=float,delimiter=",")
+    self.data = data
+    np.genfromtxt(file,dtype=float,delimiter=",")
     self.indexes = indexes
     print(self.data)
     print(self.indexes)
@@ -83,12 +79,18 @@ class adc:
           yl = yl.concatenate(muestra)
         else:
           yr = yr.concatenate(muestra)
-    tl = adc(yl)
-    tr = adc(yr)
+    tl = self.solve(yl,e)
+    tr = self.solve(yr,e)
     return Node(0,j,r,tl,tr)
 
-  def mejor_division(data):
-    pass
+  def mejor_division(self,data):
+    j = r = None
+    muestras,D = data.shape
+    #me voy a disfrazar en halloween de esta linea
+    split = int(self.data[0,self.index[0,len(self.index[0])//2]])
+    for d in range(D-1):
+      part_inferior = 1
+      part_superior =  1
 
   def clase_dominante(data):
     c = Counter(data[:,-1])
@@ -96,8 +98,17 @@ class adc:
     return res
 
 if __name__ == "__main__":
+  breakpoint()
+  data = np.genfromtxt(sys.argv[1],dtype=float,delimiter=",")
+  #obtenemos la forma de las muestras
+  muestras,D = data.shape
+  #tenemos que ordenar las muestras por cada una de las dimensiones
+  indexes = np.tile(np.arange(muestras),(D-1,1))
+  for d in range(D-1):
+    mergeSort(data[:,d],indexes[d])
+  print(indexes)
   #e = input('Introduce decremento de impureza minimo: ')
-  sol = adc(sys.argv[1])
+  #sol = adc(np.genfromtxt(sys.argv[1],dtype=float,delimiter=","),indexes)
   
 
 
