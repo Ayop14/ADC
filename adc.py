@@ -66,18 +66,18 @@ def adc(data, indexes,e):
     yl = yr = np.array([])
     for muestra in data:
       if muestra[j] <= r:
-        yl = yl.concatenate(muestra)
+        yl = np.concatenate(yl,muestra)
       else:
-        yr = yr.concatenate(muestra)
-  tl = adc()
-  tr = adc()
+        yr = np.concatenate(yr,muestra)
+  tl = adc(yl,indexes,e)
+  tr = adc(yr,indexes,e)
   return Node(0,j,r,tl,tr)
 
 def mejor_division(data,indexes):
   j = r = z = None
   muestras,D = data.shape
   #hallamos el indice intermedio
-  indice = len(indexes[0])//2
+  indice = muestras//2
   #recorremos cada una de las dimensiones
   for d in range(D-1):
     #calculamos el umbral como la media del intermedio y el anterior
@@ -93,16 +93,25 @@ def mejor_division(data,indexes):
 
 #evaluamos la calidad de la particion usando la entropia como medida
 def decremento_impureza(data,indexes,j):
-  indice = len(indexes[j])//2
+  #en este metodo es necesario destacar que dado que nunca modificamos index, hay que tener cuidado
+  #con contabilizar elementos que pertenecen ya a otros nodos (usamos len(data) para evitar esto)
+  #partimo por la mitad (podriamos pasar este valor como argumento, pero simplemente es muy barato de calcular)
+  indice = len(data)//2
+  #entropia del nodo actual
   entr = entropia(data)
   #esto de poder indexar listas CON LISTAS me parece increible
+  #entropia de la separacion izquierda (la menor)
   entrL = entropia(data[indexes[j,:indice]])
-  entrR = entropia(data[[indexes[j,indice:]])
-  return (entr - entrL*len(indexes[j,:indice]) - enterR*len([indexes[j,indice:]))
+  #entropia de la separacion derecha (mayor)
+  entrR = entropia(data[indexes[j,indice:len(data)]])
+  return (entr - entrL*len(indexes[j,:indice])/len(data) - entrR*len(indexes[j,indice:len(data)]))/len(data)
 
 def entropia(data):
   #para cada una de las clases
-  C = np.unique(data[:,-1],return_counts = True)
+  C,aux = np.unique(data[:,-1],return_counts = True)
+  #se devuelve en un formato de dos listas, y lo queremos como una sola lista de tuplas
+  C = zip(C,aux)
+  aux = None
   N,_ = data.shape
   suma = 0
   #calculamos el sumatorio de la entropia
@@ -126,7 +135,7 @@ if __name__ == "__main__":
   indexes = np.tile(np.arange(muestras),(D-1,1))
   for d in range(D-1):
     mergeSort(data[:,d],indexes[d])
-  e = input('Introduce decremento de impureza minimo: ')
+  e = float(input('Introduce decremento de impureza minimo: '))
   sol = adc(np.genfromtxt(sys.argv[1],dtype=float,delimiter=","),indexes,e)
   
 
