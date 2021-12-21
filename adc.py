@@ -11,6 +11,8 @@ class Node:
     self.r = r
     self.izq = izq
     self.der = der
+  def __repr__(self):
+    return '[Node: r={self.r}, izq={self.izq}, der={self.der}]'
 
 def mergeSort(arr,indexes):
     if len(arr) > 1:
