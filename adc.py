@@ -60,8 +60,6 @@ def adc(data, indexes,e):
     c = clase_dominante(data)
     #lo declaramos como un nodo lo suficientemente puro
     return Node(c,None,None,None,None)
-  '''
-  Con la indexacion de listas usando listas, igual no es necesaro filtrar
   else:
     yl = yr = np.array([])
     for muestra in data:
@@ -69,9 +67,8 @@ def adc(data, indexes,e):
         yl = yl.concatenate(muestra)
       else:
         yr = yr.concatenate(muestra)
-  '''
-  tl = adc
-  tr = adc
+  tl = adc()
+  tr = adc()
   return Node(0,j,r,tl,tr)
 
 def mejor_division(data,indexes):
@@ -127,7 +124,7 @@ if __name__ == "__main__":
   indexes = np.tile(np.arange(muestras),(D-1,1))
   for d in range(D-1):
     mergeSort(data[:,d],indexes[d])
-  #e = input('Introduce decremento de impureza minimo: ')
+  e = input('Introduce decremento de impureza minimo: ')
   sol = adc(np.genfromtxt(sys.argv[1],dtype=float,delimiter=","),indexes,e)
   
 
